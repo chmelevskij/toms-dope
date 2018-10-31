@@ -13,7 +13,7 @@ import { pizzas } from "./constants";
 import withPizzaCalculator from "./hoc/withPizzaCalculator";
 
 const FormWrapper = ({ getTotal, currency, discount, selectedPizzas, updatePizza, total, changeCurrency, applyDiscount }) => (
-  <Form>
+  <Form >
     <Title > Tom's Dope </Title>
     <PizzaList {...{ updatePizza, pizzas }} />
     <input onKeyUp={applyDiscount} type="text" placeholder="discount code" />
