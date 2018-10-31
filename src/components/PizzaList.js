@@ -1,14 +1,16 @@
 import React from "react";
+import { includes } from 'lodash/fp';
 import styled from "styled-components";
 
-const Pizza = ({ id, name, price, updatePizza }) => (
+const Pizza = ({ id, name, price, updatePizza, checked }) => (
   <label htmlFor={`pizza${id}`}>
-    <input 
+    <input
       id={`pizza${id}`}
       name={name}
       type="checkbox"
       value={price}
-      onChange={updatePizza(name, price)}
+      checked={checked}
+      onChange={(e) => updatePizza(name, price)}
      />
     £{price} - {name}
   </label>
@@ -19,10 +21,14 @@ const List = styled.div`
   display: grid;
 `;
 
-const PizzaList = ({ pizzas, updatePizza }) => (
+const PizzaList = ({ pizzas, updatePizza, selectedIds }) => (
   <List>
   {pizzas.map((p, i) =>
-    <Pizza {...{ ...p, updatePizza, id: i }} key={i} />
+    <Pizza
+      {...{ ...p, updatePizza, id: i }}
+      checked={includes(p.name, selectedIds)}
+      key={i}
+    />
   )}
   </List>
 );
