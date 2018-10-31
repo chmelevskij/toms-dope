@@ -1,34 +1,51 @@
 import React from "react";
 import { map, pipe, pick } from "lodash/fp";
-import { compose, withStateHandlers, withProps, mapProps } from "recompose";
+import { compose, withStateHandlers, withProps, mapProps, withHandlers } from "recompose";
 import total from "../util";
 
-export default compose(withStateHandlers(
+const getTotal =  ({ selectedPizzas, currency, discount }) => (event) => ({
+    total: pipe(map('price'), total(discount, currency))(selectedPizzas)
+  });
+
+const updatePizza = ({ selectedPizzas }) => (event) => {
+  const { target: { name, value: price } } = event;
+  if (selectedPizzas.findIndex(p => p.name === name) === -1)
+    return ({ selectedPizzas: [...selectedPizzas, { name, price }] });
+  else
+    return ({ selectedPizzas: selectedPizzas.filter(p => p.name !== name) });
+}
+
+const defaultState = {
+    total: "£0.00",
+    currency: "GBP",
+    discount: "",
+    selectedPizzas: [],
+  };
+export default compose(
+  withStateHandlers(
+    defaultState,
     {
-        total: "£0.00",
-        currency: "GBP",
-        discount: "",
-        selectedPizzas: [],
+      getTotal,
+      updatePizza,
+      handleChange: () => ({ target }) => ({ [target.name]: target.value }),
+    }),
+  withProps(
+    ({ selectedPizzas }) => ({ selectedIds: map('name', selectedPizzas) })
+  ),
+  withHandlers({
+    handleSubmit: ({ getTotal }) => event => {
+      event.preventDefault();
+      getTotal();
     },
-    {
-        getTotal: ({ selectedPizzas, currency, discount }) => (e) => {
-            e.preventDefault();
-            return ({
-                total: pipe(
-                    map(p => p.price),
-                    total(discount, currency),
-                )(selectedPizzas)
-            })
-        },
-        handleChange: () => ({ target }) => ({ [target.name]: target.value }),
-        updatePizza: ({ selectedPizzas }) => (name, price) => {
-            if (selectedPizzas.findIndex(p => p.name === name) === -1)
-                return ({ selectedPizzas: [...selectedPizzas, { name, price }] });
-            else
-                return ({ selectedPizzas: selectedPizzas.filter(p => p.name !== name) });
-        },
-    }
-    ),
-    withProps(({ selectedPizzas }) => ({ selectedIds: map('name', selectedPizzas) })),
-    mapProps(pick(['getTotal', 'handleChange', 'currency', 'selectedIds', 'updatePizza', 'total'])),
+    updateDiscount: ({ handleChange, getTotal }) => (e) => {
+      handleChange(e);
+      getTotal();
+    },
+  }),
+  mapProps(
+    pick([
+      'getTotal', 'handleChange', 'currency', 'selectedIds',
+      'updatePizza', 'total', 'handleSubmit', 'updateDiscount',
+    ]),
+  ),
 )

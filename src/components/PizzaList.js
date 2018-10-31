@@ -10,7 +10,7 @@ const Pizza = ({ id, name, price, updatePizza, checked }) => (
       type="checkbox"
       value={price}
       checked={checked}
-      onChange={(e) => updatePizza(name, price)}
+      onChange={updatePizza}
      />
     £{price} - {name}
   </label>

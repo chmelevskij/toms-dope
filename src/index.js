@@ -11,8 +11,8 @@ import {
 import { pizzas } from "./constants";
 import withPizzaCalculator from "./hoc/withPizzaCalculator";
 
-const FormWrapper = ({ getTotal, handleChange, currency, selectedIds, updatePizza, total }) => (
-  <Form onChange={getTotal} onSubmit={getTotal}>
+const FormWrapper = ({ getTotal, handleChange, currency, selectedIds, updatePizza, total, handleSubmit }) => (
+  <Form onChange={getTotal} onSubmit={handleSubmit}>
     <Title > Tom's Dope </Title>
     <PizzaList {...{ updatePizza, pizzas, selectedIds }} />
     <input
