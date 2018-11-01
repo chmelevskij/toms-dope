@@ -4,11 +4,11 @@ Plan
   1. higher order functions
   2. Partial application and Curry
   3. Pipe and compose.
-3. Non React example.
+3. Non-React example.
 4. HOC's
 5. Simple HOC.
 6. Styled-components, recompose, redux?
-7. Build an app, todo? just native or web as well.
+7. Build an app. Pizza calculator. VanillaJS and react.
 
 FP Concepts
 -----------
@@ -16,7 +16,7 @@ FP Concepts
 ### Higher Order Functions
 
 First off all it's good to touch on some basic FP concepts. Main ideas for this
-talk are "Higher Order Functions", currying and will touch a little bit on partial
+talk is "Higher-Order Functions", currying and will touch a little bit on partial
 application.
 
 From Wikipedia
@@ -29,11 +29,11 @@ So the basic idea is that functions are just another type which we can pass arou
 ### Partial application and Currying
 
 Often confused and for a reason. Let's quickly touch on those. First partial
-application. What it does is taking taking function of multiple arguments, and
-binding one of them. While currying does similar thing, but it takes a function
+application. What it does is taking a function of multiple arguments, and
+binding one of them. While currying does the similar thing, but it takes a function
 taking multiple arguments and creates a function chain returning function with
 one argument. When using functions of arity of 2 they both look the same so let
-me show little example with arity of 3.
+me show a little example with the arity of 3.
 
 Partial Aplication:
 ```javascript
@@ -57,8 +57,8 @@ So the main idea is that if you write a function with arity > 1 curry it.
 
 ### Pipe and Compose
 
-So the last piece of the puzzle is pipe and compose. Bash users users might
-have used this idea, simple example would be:
+So the last piece of the puzzle is the pipe and compose. Bash users might
+have used this idea, a simple example would be:
 
 ```sh
 $ history | grep docker
@@ -78,7 +78,7 @@ var square = x => x * x
 square(double(add1(2))) // -> 36
 ```
 
-While this is tottally valid and acceptable it has flaws. One of the biggest ones
+While this is totally valid and acceptable it has flaws. One of the biggest ones
 is that functions are applied left to right and it's quite hard to see where
 data actually enters the pipeline. Another is that we can't easily reuse all of
 the functions combined. While we could wrap all of them in another function
@@ -88,13 +88,12 @@ like:
 var calculate = x => square(double(add1(x)))
 ```
 
-If we have another set of functions it becomes quite tedious and error prone.
+If we have another set of functions it becomes quite tedious and error-prone.
 To tackle this problem we can write a little helper called `pipe` which would
 take multiple functions and apply them left to right, building a similar
-function to calculate which can later on be used as a function. Let's think
+function to calculate which can, later on, be used as a function. Let's think
 this problem through. Our function has to accept multiple a list of functions
-and pass result of the previous one into the next one. First let's build
-function which does the last step.
+and pass the result of the previous one into the next one. First, let's build the function which does the last step.
 
 ```javascript
 var _pipe = (f, g) => x => g(f(x))
@@ -103,8 +102,9 @@ _pipe(add1, double)(2) // -> 6
 
 So while this allows piping one function output to the other one it's still
 limited to 2 functions only. So if we try to do `_pipe(add1, double,
-square)(2)` we still will get 6 back. So we need annother function to tackle
-the list of functions and applying them to each other.
+square)(2)` we still will get 6 back. So we need another function to tackle
+the list of functions and applying them to each other. From looking into
+signature of simple pipe it looks really similar to reducer function.
 
 ```javascript
 var pipe = (...os) => os.reduce(_pipe)
@@ -115,20 +115,20 @@ calculate(2) // -> 36
 Somehow Practical Example
 -------------------------
 
-So now with knowledge about currying and piping we can write a simple app which
-uses both of the concepts to build up bigger system ou of smaller components.
+So now with knowledge about currying and piping, we can write a simple app which
+uses both of the concepts to build up bigger system out of smaller components.
 Sorry got carried away with it but will quickly show just these concepts
-applied to non-react project.  But the good part is that we will be able to
+applied to a non-react project.  But the good part is that we will be able to
 reuse some of this.
 [SHOW THE QUICK DEMO]
 
 HOC's
 -----
 
-So just like higher order functions in plain Js Higher Order Components have
+So just like higher order functions in plain Js Higher-Order Components have
 very similar properties. It's a function which accepts a component and returns
 a component. Usually injecting some sort of functionality or adding extra props.
-For example we can create a component which capitalizes all letters.
+For example, we can create a component which capitalizes all letters.
 
 ```jsx
 const Title = props => <h1>{props.children}</h1>
@@ -162,7 +162,7 @@ required functionality.
 Pizza Example
 -------------
 
-So I've rebuild previous example with all the components.
+So I've rebuild the previous example with all the components.
 
 ### Resources
 1. [Higher Order Function - Wikipedia](https://en.wikipedia.org/wiki/Higher-order_function)
