@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Pizza Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+
+    body {
+      min-height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'Permanent Marker', cursive;
+      color: #9C27B0;
+    }
+
+    form {
+      display: grid;
+      color: #616161;
+      grid-gap: 15px;
+      grid-template-columns: 1fr 1fr;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 15px 35px rgba(50, 50, 93, .1), 0 5px 15px rgba(0, 0, 0, .07);
+      z-index: 1;
+      background: white;
+    }
+
+    .pizzas {
+      grid-column: 1 / -1;
+      display: grid;
+    }
+
+    .total {
+      font-size: 2rem;
+      font-weight: 100;
+      text-align: left;
+    }
+
+    body::before {
+      content: "";
+      background: #F6F9FC;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -60vh;
+      height: 100vh;
+      transform: skew(0, -12deg)
+    }
+  </style>
+</head>
+<body>
+<form name="pizza-form" action="" id="pizza-form">
+  <h1>Tom's Dope</h1>
+  <div class="pizzas"></div>
+  <input type="text" name="discount" id="discount" placeholder="Discount Code">
+  <select name="currency" id="currency">
+    <option value="GBP">£</option>
+    <option value="EUR">€</option>
+    <option value="USD">$</option>
+  </select>
+  <span class="total">£0.00</span>
+</form>
+<script>
+  // === Utils ===
+  const keys = [ 'join', 'map', 'reduce' ];
+  const extract = method => f => arr => Array.prototype[method].bind(arr, f)()
+  const T = keys.reduce((acc, k) => {
+    acc[k] = extract(k);
+    return acc
+  }, {});
+  const { map, join, reduce } = T;
+  // === === ===
+  const pipe = (...os) => os.reduce((f, g) => (...args) => g(f(...args)));
+  const add = (x, y) => x + y;
+</script>
+
+<script>
+// CONSTANTS
+const discounts = {
+  OFF10: 0.9,
+  OFF20: 0.8,
+  OFF30: 0.7,
+};
+
+const currencies = {
+  EUR: 1.14,
+  USD: 1.41,
+  GBP: 1,
+};
+
+const currencySigns = {
+  EUR: '€',
+  USD: '$',
+  GBP: '£',
+};
+
+const calcPrice = priceMap => code => price => priceMap[code]
+  ? price * priceMap[code]
+  : price;
+const applyDiscount = calcPrice(discounts);
+const changeCurrency = calcPrice(currencies);
+
+const format = currency => price => currencySigns[currency] + price;
+const toFixed2 = n => n.toFixed(2);
+
+// COMBINE
+const total = (discount, currency) => pipe(
+  map(Number),
+  reduce(add),
+  applyDiscount(discount),
+  changeCurrency(currency),
+  toFixed2,
+  format(currency),
+);
+
+let pizzas = [
+  {name: 'Meat Feast', price: 9.99},
+  {name: 'Vegie Delight', price: 8.99},
+  {name: 'Margaritha', price: 7.99},
+];
+
+const pizza = (p, i) => `
+  <label for="pizza${i}">
+    <input id="pizza${i}" name="pizza" type="checkbox" autocomplete="off" value="${p.price}">
+    £${p.price} - ${p.name}
+  </label>
+`;
+
+let pizzaView = document.querySelector('.pizzas');
+let totalView = document.querySelector('.total');
+let pizzaForm = document.forms['pizza-form'];
+
+let pizzaList = pipe(map(pizza), join(""))(pizzas);
+pizzaView.innerHTML = pizzaList;
+
+const getFormData = form => {
+  let formData = new FormData(form);
+
+  let prices = formData.getAll('pizza');
+  let currency = formData.get('currency');
+  let discount = formData.get('discount');
+  return {prices, currency, discount};
+}
+
+const updateTotal = () => {
+  let { prices, currency, discount } = getFormData(pizzaForm);
+  let getTotal = total(discount, currency);
+  if(prices.length)
+    totalView.innerHTML = getTotal(prices);
+  else
+    totalView.innerHTML = getTotal([0,0]);
+}
+
+
+pizzaForm.addEventListener('change', updateTotal);
+pizzaForm.addEventListener('keyup', updateTotal);
+
+</script>
+</body>
+</html>
