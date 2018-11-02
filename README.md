@@ -120,7 +120,8 @@ uses both of the concepts to build up bigger system out of smaller components.
 Sorry got carried away with it but will quickly show just these concepts
 applied to a non-react project.  But the good part is that we will be able to
 reuse some of this.
-[SHOW THE QUICK DEMO]
+
+[Pizza](./vanilla-pizza.html)
 
 HOC's
 -----
